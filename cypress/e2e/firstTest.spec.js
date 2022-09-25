@@ -2,8 +2,8 @@
 
 describe('Test with backend', () => {
     beforeEach('login to the app', () => {
-        //adding the stub 'tags.json' to replace real values in the tags api response
-        cy.intercept('GET', 'https://api.realworld.io/api/tags', {fixture: 'tags.json'})
+        // listen for GET request with 'tag' in the path name of the URL
+        cy.intercept({method: 'Get', path:'tags'}, {fixture: 'tags.json'})
         cy.loginToApplication()
     })
 
@@ -27,8 +27,39 @@ describe('Test with backend', () => {
             expect(xhr.response.body.article.description).to.equal('Breezing through the course')
         })
 
-        // Delete the article to allow the user to run this test again without error
-        
+        // Delete the article to allow the user to run this test again without error   
+    })
+
+    it.only('intercepting and modyfing the req and resp', () => {
+        // intercept the api call when the publish article button is selected.
+        // cy.intercept('POST', 'https://api.realworld.io/api/articles/', (req) =>{
+        //     req.body.article.description = "Breezing through the course 2"
+        // }).as('postArticles')
+
+        // intercept response from the server
+        cy.intercept('POST', 'https://api.realworld.io/api/articles/', (req) =>{
+            req.reply( res => {
+                expect(res.body.article.description).to.equal('Breezing through the course')
+                // modify res and send back to the browser
+                res.body.article.description = "Breezing through the course 2"
+            })
+        }).as('postArticles')
+       
+        // script to create a new article
+        cy.contains('New Article').click()
+        cy.get('[formcontrolname="title"]').type('User from Ireland')
+        cy.get('[formcontrolname="description"]').type('Breezing through the course')
+        cy.get('[formcontrolname="body"]').type('in 2022')
+        cy.get('[placeholder="Enter tags"]').type('#learning')
+        cy.contains('Publish Article').click()
+        // force Cypress to wait for the api call to complete before we start looking into it.
+        cy.wait('@postArticles').then( xhr => {
+            // asert the xhr obj which contains all the info related to the api call which has the request/repsonse obj.
+            console.log(xhr)
+            expect(xhr.response.statusCode).to.equal(200)
+            expect(xhr.request.body.article.body).to.equal('in 2022')
+            expect(xhr.response.body.article.description).to.equal('Breezing through the course 2')
+        })
 
     })
 
@@ -45,7 +76,7 @@ describe('Test with backend', () => {
     })
 
     // validate the like button increases when it is clicked
-    it.only('verify global feed likes count', () => {
+    it('verify global feed likes count', () => {
         cy.intercept('GET', 'https://api.realworld.io/api/articles/feed*', {"articles":[],"articlesCount":0} )
         // add the mock articles.json as a stub response to the api call
         cy.intercept('GET', 'https://api.realworld.io/api/articles*', {fixture: 'articles.json'} )
@@ -57,7 +88,6 @@ describe('Test with backend', () => {
             expect(heartList[0]).to.contain('3')
             expect(heartList[1]).to.contain('5')
         })
-
         
         cy.fixture('articles.json').then(file => {
             const articleLink = file.articles[1].slug
