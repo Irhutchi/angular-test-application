@@ -2,10 +2,12 @@
 
 describe('Test with backend', () => {
     beforeEach('login to the app', () => {
+        //adding the stub 'tags.json' to replace real values in the tags api response
+        cy.intercept('GET', 'https://api.realworld.io/api/tags', {fixture: 'tags.json'})
         cy.loginToApplication()
     })
 
-    it.only('verify correct request and response', () => {
+    it('verify correct request and response', () => {
         // intercept the api call when the publish article button is selected.
         cy.intercept('POST', 'https://api.realworld.io/api/articles/').as('postArticles')
        
@@ -29,6 +31,48 @@ describe('Test with backend', () => {
         
 
     })
+
+    it('verify popular tags are displayed', () => {
+        cy.log('we logged in')
+        // add assertion to ensure the tags.json file contents have been injected into the api response
+        cy.get('.tag-list')
+        .should('contain', 'cypress')
+        .and('contain', 'automation')
+        .and('contain', 'testing')
+        .and('contain', 'creative')
+        .and('contain', 'production')
+        .and('contain', 'staging')
+    })
+
+    // validate the like button increases when it is clicked
+    it.only('verify global feed likes count', () => {
+        cy.intercept('GET', 'https://api.realworld.io/api/articles/feed*', {"articles":[],"articlesCount":0} )
+        // add the mock articles.json as a stub response to the api call
+        cy.intercept('GET', 'https://api.realworld.io/api/articles*', {fixture: 'articles.json'} )
+
+        // click on the global feed
+        cy.contains('Global Feed').click()
+        // return a list of buttons
+        cy.get('app-article-list button').then(heartList => {
+            expect(heartList[0]).to.contain('3')
+            expect(heartList[1]).to.contain('5')
+        })
+
+        
+        cy.fixture('articles.json').then(file => {
+            const articleLink = file.articles[1].slug
+            file.articles[1].favoritesCount = 6
+
+            // intercept favourite api call to provide our own mock response
+            cy.intercept('POST', 'https://api.realworld.io/api/articles/'+articleLink+'/favorite', file)
+            cy.get('app-article-list button').eq(1).click().should('contain', '6')
+
+        })
+    })
+
+    
+    
+
 })
 
 

@@ -1,0 +1,39 @@
+{
+    "articles": [
+        {
+            "slug": "This-is-the-title...-1850",
+            "title": "This is injected title 1 in api response",
+            "description": "This is a description",
+            "body": "This is a body of the article",
+            "tagList": [],
+            "createdAt": "2022-09-24T19:31:16.083Z",
+            "updatedAt": "2022-09-24T19:31:16.083Z",
+            "favorited": true,
+            "favoritesCount": 3,
+            "author": {
+                "username": "CY Tester",
+                "bio": "knsdsadsdsadas",
+                "image": "knsdsadsdsadas",
+                "following": false
+            }
+        },
+        {
+            "slug": "This-is-the-title-example-1850",
+            "title": "This is injected title 2 in api response",
+            "description": "This is a description",
+            "body": "This is a body of the article",
+            "tagList": [],
+            "createdAt": "2022-09-23T15:51:09.818Z",
+            "updatedAt": "2022-09-23T15:51:09.818Z",
+            "favorited": false,
+            "favoritesCount": 5,
+            "author": {
+                "username": "CY Tester",
+                "bio": "knsdsadsdsadas",
+                "image": "knsdsadsdsadas",
+                "following": false
+            }
+        }
+    ],
+    "articlesCount": 2
+}
