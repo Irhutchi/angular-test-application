@@ -30,7 +30,7 @@ describe('Test with backend', () => {
         // Delete the article to allow the user to run this test again without error   
     })
 
-    it.only('intercepting and modyfing the req and resp', () => {
+    it('intercepting and modyfing the req and resp', () => {
         // intercept the api call when the publish article button is selected.
         // cy.intercept('POST', 'https://api.realworld.io/api/articles/', (req) =>{
         //     req.body.article.description = "Breezing through the course 2"
@@ -100,7 +100,61 @@ describe('Test with backend', () => {
         })
     })
 
-    
+    // Delete a new article
+    it.only('delete a new article in a global feed', () => {
+
+        const userCredentials = {
+            "user": {
+                "email": "artem.bondar16@gmail.com",
+                "password": "CypressTest1"
+            }
+        }
+
+        const bodyRequest = {
+            "article": {
+                "tagList": [],
+                "title": "Api request 0.21",
+                "description": "Hackathon 2022",
+                "body": "Angular is awesome"
+            }
+        }
+
+        // get access token using api request
+        cy.request('POST', 'https://api.realworld.io/api/users/login', userCredentials)
+        .its('body').then(body => {
+
+            const token = body.user.token
+
+
+            // post request to create a new article
+            // provide the obj as a param for the cy request
+            cy.request({
+                url: 'https://api.realworld.io/api/articles/?',
+                headers: {'Authorization': 'Token '+token}, // grab the access token from the 1st request
+                method: 'POST',
+                body: bodyRequest
+            }).then( response => {
+                expect(response.status).to.equal(200)
+            })
+
+
+            cy.contains('Global Feed').click()
+            cy.get('.article-preview').first().click()
+            cy.get('.article-actions').contains('Delete Article').click()
+
+            // verify article was successfully deleted
+
+            // need to provide auth token again, use onj again 
+            cy.request({
+                url: 'https://api.realworld.io/api/articles?limit=10&offset=0',
+                headers: { 'Authorization': 'Token '+token},
+                method: 'GET'
+            }).its('body').then( body => {
+                expect(body.articles[0].title).not.to.equal('Api request 0.21')
+            })
+        })
+
+    }) 
     
 
 })
