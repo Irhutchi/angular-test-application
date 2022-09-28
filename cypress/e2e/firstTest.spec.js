@@ -101,14 +101,7 @@ describe('Test with backend', () => {
     })
 
     // Delete a new article
-    it.only('delete a new article in a global feed', () => {
-
-        const userCredentials = {
-            "user": {
-                "email": "artem.bondar16@gmail.com",
-                "password": "CypressTest1"
-            }
-        }
+    it('delete a new article in a global feed', () => {
 
         const bodyRequest = {
             "article": {
@@ -120,11 +113,7 @@ describe('Test with backend', () => {
         }
 
         // get access token using api request
-        cy.request('POST', 'https://api.realworld.io/api/users/login', userCredentials)
-        .its('body').then(body => {
-
-            const token = body.user.token
-
+        cy.get('@token').then(token => {
 
             // post request to create a new article
             // provide the obj as a param for the cy request
