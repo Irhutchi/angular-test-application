@@ -8,7 +8,7 @@ describe('Test log out functionality', () => {
     it('verify use can log out successfully', () => {
         cy.contains('Settings').click()
         cy.contains('Or click here to logout').click()
-        cy.get(".nav-link").should('contain', 'Sign up')
+        cy.get(".nav-link").should('contain', 'Sign')
     })
 })
 

@@ -13,7 +13,7 @@ describe('Test with backend', () => {
        
         // script to create a new article
         cy.contains('New Article').click()
-        cy.get('[formcontrolname="title"]').type('User from Ireland v1')
+        cy.get('[formcontrolname="title"]').type('Feed Title')
         cy.get('[formcontrolname="description"]').type('Breezing through the course')
         cy.get('[formcontrolname="body"]').type('in 2022')
         cy.get('[placeholder="Enter tags"]').type('#learning')
@@ -47,7 +47,7 @@ describe('Test with backend', () => {
        
         // script to create a new article
         cy.contains('New Article').click()
-        cy.get('[formcontrolname="title"]').type('User from Ireland')
+        cy.get('[formcontrolname="title"]').type('Feed Title')
         cy.get('[formcontrolname="description"]').type('Breezing through the course')
         cy.get('[formcontrolname="body"]').type('in 2022')
         cy.get('[placeholder="Enter tags"]').type('#learning')
@@ -106,7 +106,7 @@ describe('Test with backend', () => {
         const bodyRequest = {
             "article": {
                 "tagList": [],
-                "title": "Api request 0.21",
+                "title": "Feed Title",
                 "description": "Hackathon 2022",
                 "body": "Angular is awesome"
             }
@@ -139,7 +139,7 @@ describe('Test with backend', () => {
                 headers: { 'Authorization': 'Token '+token},
                 method: 'GET'
             }).its('body').then( body => {
-                expect(body.articles[0].title).not.to.equal('Api request 0.21')
+                expect(body.articles[0].title).not.to.equal('@Sample Title')
             })
         })
 
