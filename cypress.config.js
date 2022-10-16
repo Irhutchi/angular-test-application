@@ -8,6 +8,10 @@ module.exports = defineConfig({
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
     excludeSpecPattern: ['**/1-getting-started/*', '**/2-advanced-examples/*'],
     video: false,
+    reporter: 'cypress-multi-reporters',
+      reporterOptions: {
+        configFile: 'reporter-config.json'
+      },
     retries: {
       // Configure retry attempts for `cypress run`
       // Default is 0

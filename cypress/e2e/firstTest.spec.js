@@ -7,7 +7,7 @@ describe('Test with backend', () => {
         cy.loginToApplication()
     })
 
-    it.only('verify correct request and response', () => {
+    it('verify correct request and response', () => {
         // intercept the api call when the publish article button is selected.
         cy.intercept('POST', Cypress.env('apiUrl')+'/api/articles/').as('postArticles')
        
@@ -28,9 +28,6 @@ describe('Test with backend', () => {
         })
 
         // Delete the article to allow the user to run this test again without error   
-        cy.contains('Global Feed').click()
-        cy.get('.article-preview').first().click()
-        cy.get('.article-actions').contains('Delete Article').click()
     })
 
     it('intercepting and modyfing the req and resp', () => {

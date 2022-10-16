@@ -45,3 +45,8 @@ Thumbs.db
 
 # env files
 /cypress.env.json
+
+# test report files
+/results
+/screenshots
+mochawesome-report
