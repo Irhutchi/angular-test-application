@@ -15,6 +15,11 @@ module.exports = defineConfig({
       // Configure retry attempts for `cypress open`
       // Default is 0
       "openMode": 1
-    }
+    },
+    // env: {
+    //   username: 'artem.bondar16@gmail.com',
+    //   password: 'CypressTest1',
+    //   apiUrl: 'https://api.realworld.io',
+    // }
   }
 })
