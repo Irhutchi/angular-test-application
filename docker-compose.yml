@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  cypress_runner:
+    image: cypress_compose
+    build:
+        context: .
+        dockerfile: ./Dockerfile
+    volumes:
+        - ./dockerReports:/app/cypress/results
+        - ./dockerReports:/app/mochawesome-report

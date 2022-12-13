@@ -47,6 +47,7 @@ Thumbs.db
 /cypress.env.json
 
 # test report files
-/results
+cypress/results/*
 /screenshots
 mochawesome-report
+mochawesome.json

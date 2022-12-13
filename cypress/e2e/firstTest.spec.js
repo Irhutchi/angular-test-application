@@ -13,11 +13,12 @@ describe('Test with backend', () => {
        
         // script to create a new article
         cy.contains('New Article').click()
-        cy.get('[formcontrolname="title"]').type('Feed Title')
+        cy.get('[formcontrolname="title"]').type('Christmas Title 2022')
         cy.get('[formcontrolname="description"]').type('horses for courses')
         cy.get('[formcontrolname="body"]').type('in 2022')
         cy.get('[placeholder="Enter tags"]').type('#learning')
         cy.contains('Publish Article').click()
+        cy.wait(500)
         // force Cypress to wait for the api call to complete before we start looking into it.
         cy.wait('@postArticles').then( xhr => {
             // asert the xhr obj which contains all the info related to the api call which has the request/repsonse obj.
@@ -27,7 +28,13 @@ describe('Test with backend', () => {
             expect(xhr.response.body.article.description).to.equal('horses for courses')
         })
 
-        // Delete the article to allow the user to run this test again without error   
+        // Delete the article to allow the user to run this test again without error
+    })
+
+    it('Delete first global article', () => {
+        cy.contains('Global Feed').click()
+        cy.get('.article-preview').first().click()
+        cy.get('.article-actions').contains('Delete Article').click()
     })
 
     it('intercepting and modyfing the req and resp', () => {
@@ -40,16 +47,16 @@ describe('Test with backend', () => {
         cy.intercept('POST', Cypress.env('apiUrl')+'/api/articles/', (req) =>{
             req.reply( res => {
                 //assert response is as expected
-                expect(res.body.article.description).to.equal('horses for courses')
-                // after verification, modify res and send back to the browser
-                res.body.article.description = "horses for courses 2"
+                expect(res.body.article.description).to.equal('This is a description')
+                // after verifying response, send the modified res and back to the browser
+                res.body.article.description = "intercepted description"
             })
         }).as('postArticles')
        
         // script to create a new article
         cy.contains('New Article').click()
         cy.get('[formcontrolname="title"]').type('Why the long face 321')
-        cy.get('[formcontrolname="description"]').type('horses for courses')
+        cy.get('[formcontrolname="description"]').type('This is a description')
         cy.get('[formcontrolname="body"]').type('Angular is awesome')
         // cy.get('[placeholder="Enter tags"]').type('#learning')
         cy.contains('Publish Article').click()
@@ -59,13 +66,14 @@ describe('Test with backend', () => {
             console.log(xhr)
             expect(xhr.response.statusCode).to.equal(200)
             expect(xhr.request.body.article.body).to.equal('Angular is awesome')
-            expect(xhr.response.body.article.description).to.equal('horses for courses 2')
+            expect(xhr.response.body.article.description).to.equal("intercepted description")
         })
+    })
 
+    it('Delete first global article', () => {
         cy.contains('Global Feed').click()
-            cy.get('.article-preview').first().click()
-            cy.get('.article-actions').contains('Delete Article').click()
-
+        cy.get('.article-preview').first().click()
+        cy.get('.article-actions').contains('Delete Article').click()
     })
 
     it('verify popular tags are displayed', () => {
